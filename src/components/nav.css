@@ -1,0 +1,32 @@
+.time{
+    border: dashed;
+    width: 400px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;    
+}
+
+.applesauce{
+    border: dashed;
+    width: 400px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.score{
+    border: dashed;
+    width: 400px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+.link{
+    border: dashed;
+    width: 400px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
