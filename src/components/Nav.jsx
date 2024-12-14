@@ -12,7 +12,7 @@ export default function BasicMenu() {
       <Typography sx={{display: 'flex', alignItems: 'row', textAlign: 'center'}}>
         <h4 class="time">Time</h4>
         <h4 class="applesauce">Progress Bar</h4>
-        <h4 class="score">Score</h4>
+        <h4 class="score">0</h4>
         <Link
         to={`/`}>
             <Button class="home btn btn-secondary btn-lg" sx={{border: 'dashed'}}><h4>Home</h4></Button>

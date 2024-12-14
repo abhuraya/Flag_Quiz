@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Button from "@mui/material/Button";
 import * as React from 'react';
 import CssBaseline from "@mui/material/CssBaseline";
 import { styled } from '@mui/material/styles';
@@ -198,6 +199,7 @@ import Venezuela from '../assets/Flags/Venezuela.png';
 import Yemen from '../assets/Flags/Yemen.png';
 import Zambia from '../assets/Flags/Zambia.png';
 import Zimbabwe from '../assets/Flags/Zimbabwe.png';
+import { useState } from "react";
 
 export default function Flags(){
 
@@ -222,8 +224,17 @@ let randomNum1 = function (){
 }
 let a = randomNum1();
 let b = randomNum1();
+
+class country{
+    constructor(correct, name){
+        this.correct = correct;
+        this.name = name;
+    }
+};
+
 let chosenFlag = countryFlags[randomNum];
 let chosenCountry = countries[randomNum];
+let firstNation = new country(true, chosenCountry);
 
 //Functions to prevent repetitions
 let chosenCountry1 = function(){
@@ -253,60 +264,118 @@ let chosenCountry3 = function(){
         chosenCountry3();
     }
 };
-let answer;
-let answer1;
-let answer2;
-let answer3;
+
+const secondCountry = new country(true, chosenCountry1());
+const thirdCountry = new country(true, chosenCountry2());
+const fourthCountry = new country(true, chosenCountry3());
+
 console.log(chosenCountry);
 
 
+class answer {
+    constructor(correct, button, text){
+        this.correct = correct;
+        this.button = button;
+        this.text = text;
+    }
+}
 
+const answer4 = new answer(0);
+const answer1 = new answer(1);
+const answer2 = new answer(2);
+const answer3 = new answer(3);
 
 
 //answer as number 4 is infrequent
 if(a < 40){
-    answer = chosenCountry;
-    answer1 = chosenCountry1();
-    answer2 = chosenCountry2();
-    answer3 = chosenCountry3();
+    answer4.text = firstNation.name;
+    answer1.text = secondCountry.name;
+    answer2.text = thirdCountry.name;
+    answer3.text = fourthCountry.name;
 }else if(a > 50 && a < 90){
-    answer = chosenCountry1();
-    answer1 = chosenCountry3();
-    answer2 = chosenCountry;
-    answer3 = chosenCountry2();
+    answer4.text = secondCountry.name;
+    answer1.text = fourthCountry.name;
+    answer2.text = firstNation.name;
+    answer3.text = thirdCountry.name;
 }else if(a > 100 && a < 140){
-    answer = chosenCountry3();
-    answer1 = chosenCountry;
-    answer2 = chosenCountry2();
-    answer3 = chosenCountry1();
+    answer4.text = fourthCountry.name;
+    answer1.text = firstNation.name;
+    answer2.text = thirdCountry.name;
+    answer3.text = secondCountry.name;
 }else{
-    answer = chosenCountry2();
-    answer1 = chosenCountry1();
-    answer2 = chosenCountry3();
-    answer3 = chosenCountry;
+    answer4.text = thirdCountry.name;
+    answer1.text = secondCountry.name;
+    answer2.text = fourthCountry.name;
+    answer3.text = firstNation.name;
 }
 
+
+let onClick = () => {
+
+    if(answer4.text === firstNation.name){
+        alert('correct');
+        Flags();
+    }else{
+        alert('incorrect');
+        Flags();
+    }
+}
+
+let onClick1 = () => {
+
+    if(answer1.text === firstNation.name){
+        alert('correct');
+        Flags();
+    }else{
+        alert('incorrect');
+        Flags();
+    }
+}
+
+let onClick2 = () => {
+
+    if(answer2.text === firstNation.name){
+        alert('correct');
+        Flags();
+    }else{
+        alert('incorrect');
+        Flags();
+    }
+}
+
+let onClick3 = () => {
+
+    if(answer3.text === firstNation.name){
+        alert('correct');
+        Flags();
+    }else{
+        alert('incorrect');
+        Flags();
+    }
+}
     
     return (
         <React.Fragment>
             <CssBaseline />
-            <Container maxWidth="lg">
+            <Container maxWidth="md">
                 <Box sx={{ bgcolor: '#cfe8fc', height: '59vh'}}>
                     <Container sx={{ height: '30vh', border: 'dashed', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         <img src={chosenFlag} alt="a flag" />
                     </Container>
-                    <Grid container spacing={{md: 0}} columns={{md: 4}} sx={{border: 'dashed'}}>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>{answer}</Item>
+                    <Grid container spacing={{md: 0}} columns={{md: 4}} sx={{border: 'dashed', height: '30vh'}}>
+                        <Grid size={{md: 6}} sx={{height: '70px', display: 'flex', justifyContent: 'center'}}>
+                            <Button onClick={onClick} variant="outlined" sx={{ width: 1000}}>{answer4.text}</Button>
                         </Grid>
-                        <Grid sx={{height: '70px'}} size={{lg: 6}}>
-                            <Item>{answer1}</Item>
+                        <Grid sx={{height: '70px', display: 'flex', justifyContent: 'center'}} size={{md: 6}}>
+                            <Button onClick={onClick1} variant="outlined" sx={{width: 1000}}>{answer1.text}</Button>
                         </Grid>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>{answer2}</Item>
+                        <Grid size={{md: 6}} sx={{height: '70px', display: 'flex', justifyContent: 'center'}}>
+                            <Button onClick={onClick2} variant="outlined" sx={{width: 1000}}>{answer2.text}</Button>
                         </Grid>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>{answer3}</Item>
+                        <Grid size={{md: 6}} sx={{height: '70px', display: 'flex', justifyContent: 'center'}}>
+                            <Button onClick={() => {
+                                onClick3
+                            }} variant="outlined" sx={{width: 1000}}>{answer3.text}</Button>
                         </Grid>
                     </Grid>
                 </Box>
