@@ -1,5 +1,4 @@
 .time{
-    border: dashed;
     width: 400px;
     display: flex;
     justify-content: space-around;
@@ -7,7 +6,6 @@
 }
 
 .applesauce{
-    border: dashed;
     width: 400px;
     display: flex;
     justify-content: space-around;
@@ -15,7 +13,6 @@
 }
 
 .score{
-    border: dashed;
     width: 400px;
     display: flex;
     justify-content: space-around;
@@ -24,7 +21,6 @@
 }
 
 .hom{
-    border: dashed;
     width: 400px;
     display: flex;
     justify-content: space-around;

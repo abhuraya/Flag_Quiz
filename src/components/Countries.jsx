@@ -361,10 +361,10 @@ export default function Countries(){
             <CssBaseline />
             <Container maxWidth="md">
                 <Box sx={{ bgcolor: '#cfe8fc', height: '70vh'}}>
-                <Container sx={{ height: '30vh', border: 'dashed',  textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Container sx={{ height: '30vh',  textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         {chosenCountry}
                     </Container>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3}} sx={{border: 'dashed'}}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3}}>
                         <Grid size={6}>
                             <Button onClick={onClick}><img src={answer4.text} alt="a flag" /></Button>
                         </Grid>

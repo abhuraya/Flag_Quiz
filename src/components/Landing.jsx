@@ -15,7 +15,7 @@ function Landing(){
 
     return (
         <div>
-            <Typography class="text-center" sx={{border: 'dashed', textAlign: 'center'}}>
+            <Typography class="text-center" sx={{textAlign: 'center'}}>
                 <br />
                 <br />
                 <br />
@@ -35,7 +35,7 @@ function Landing(){
                 <br />
             </Typography>
 
-         <Box component="section" sx={{ p: 2, border: '1px dashed', height: 100, display: 'flex', justifyContent: 'space-around' }}>
+         <Box component="section" sx={{ p: 2, height: 100, display: 'flex', justifyContent: 'space-around' }}>
          <Link 
          to={`/Flags`}
          >
