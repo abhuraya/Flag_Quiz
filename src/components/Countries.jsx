@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import Box from '@mui/material/Box';
+import Button from "@mui/material/Button";
 import Container from '@mui/material/Container';
 import * as React from 'react';
 import CssBaseline from "@mui/material/CssBaseline";
@@ -213,27 +214,168 @@ export default function Countries(){
           backgroundColor: '#1A2027',
         }),
       }));
+
+      let randomNum = Math.floor(Math.random() * countryFlags.length)
+      let randomNum1 = function (){
+          return Math.floor(Math.random() * countries.length);
+      }
+      let a = randomNum1();
+      let b = randomNum1();
+      
+      class country{
+          constructor(correct, name){
+              this.correct = correct;
+              this.name = name;
+          }
+      };
+      
+      let chosenFlag = countryFlags[randomNum];
+      let chosenCountry = countries[randomNum];
+      let firstNation = new country(true, chosenFlag);
+      
+      //Functions to prevent repetitions
+      let chosenCountry1 = function(){
+          const num = randomNum1();
+          
+          if(num !== randomNum){
+              return countryFlags[num];
+          }else{
+              chosenCountry1();
+          }
+      };
+      let chosenCountry2 = function(){
+          const num = randomNum1();
+      
+          if(num !== randomNum && num !== chosenCountry1.num){
+              return countryFlags[num];
+          }else{
+              chosenCountry2();
+          }
+      };
+      let chosenCountry3 = function(){
+          const num = randomNum1();
+      
+          if(num !== randomNum && num !== chosenCountry1.num && num !== chosenCountry2.num){
+              return countryFlags[num];
+          }else{
+              chosenCountry3();
+          }
+      };
+
+    const secondCountry = new country(true, chosenCountry1());
+    const thirdCountry = new country(true, chosenCountry2());
+    const fourthCountry = new country(true, chosenCountry3());
+
+
+    
+      class answer {
+        constructor(correct, button, text){
+            this.correct = correct;
+            this.button = button;
+            this.text = text;
+        }
+    }
+    
+    const answer4 = new answer(0);
+    const answer1 = new answer(1);
+    const answer2 = new answer(2);
+    const answer3 = new answer(3);
+    
+    
+    //answer as number 4 is infrequent
+    if(a < 40){
+        answer4.text = firstNation.name;
+        answer1.text = secondCountry.name;
+        answer2.text = thirdCountry.name;
+        answer3.text = fourthCountry.name;
+    }else if(a > 50 && a < 90){
+        answer4.text = secondCountry.name;
+        answer1.text = fourthCountry.name;
+        answer2.text = firstNation.name;
+        answer3.text = thirdCountry.name;
+    }else if(a > 100 && a < 140){
+        answer4.text = fourthCountry.name;
+        answer1.text = firstNation.name;
+        answer2.text = thirdCountry.name;
+        answer3.text = secondCountry.name;
+    }else{
+        answer4.text = thirdCountry.name;
+        answer1.text = secondCountry.name;
+        answer2.text = fourthCountry.name;
+        answer3.text = firstNation.name;
+    }
+    
+    let reload = () => {
+        location.reload();
+    }
+    
+    let onClick = () => {
+    
+        if(answer4.text === firstNation.name){
+            alert('correct');
+            reload();        
+        }else{
+            alert('incorrect');
+            reload();
+        }
+    }
+    
+    let onClick1 = () => {
+    
+        if(answer1.text === firstNation.name){
+            alert('correct');
+            reload();
+        }else{
+            alert('incorrect');
+            reload();
+        }
+    }
+    
+    let onClick2 = () => {
+    
+        if(answer2.text === firstNation.name){
+            alert('correct');
+            reload();
+        }else{
+            alert('incorrect');
+            reload();
+        }
+    }
+    
+    let onClick3 = () => {
+    
+        if(answer3.text === firstNation.name){
+            alert('correct');
+            reload();
+        }else{
+            alert('incorrect');
+            reload();
+        }
+    }
+        
+        
+        
     
     return (
         <React.Fragment>
             <CssBaseline />
             <Container maxWidth="md">
-                <Box sx={{ bgcolor: '#cfe8fc', height: '59vh'}}>
+                <Box sx={{ bgcolor: '#cfe8fc', height: '70vh'}}>
                 <Container sx={{ height: '30vh', border: 'dashed',  textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                        Question
+                        {chosenCountry}
                     </Container>
-                    <Grid container spacing={{md: 0}} columns={{md: 4}} sx={{border: 'dashed'}}>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>size=8</Item>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3}} sx={{border: 'dashed'}}>
+                        <Grid size={6}>
+                            <Button onClick={onClick}><img src={answer4.text} alt="a flag" /></Button>
                         </Grid>
-                        <Grid sx={{height: '70px'}} size={{lg: 6}}>
-                            <Item>size=4</Item>
+                        <Grid size={6}>
+                           <Button onClick={onClick1}><img src={answer1.text} alt="a flag" /></Button>
                         </Grid>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>size=4</Item>
+                        <Grid size={6}>
+                            <Button onClick={onClick2}><img src={answer2.text} alt="a flag" /></Button>
                         </Grid>
-                        <Grid size={{lg: 6}} sx={{height: '70px'}}>
-                            <Item>size=8</Item>
+                        <Grid size={6}>
+                           <Button onClick={onClick3}><img src={answer3.text} alt="a flag" /></Button>
                         </Grid>
                     </Grid>
                 </Box>

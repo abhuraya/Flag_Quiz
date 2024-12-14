@@ -309,15 +309,18 @@ if(a < 40){
     answer3.text = firstNation.name;
 }
 
+let reload = () => {
+    location.reload();
+}
 
 let onClick = () => {
 
     if(answer4.text === firstNation.name){
         alert('correct');
-        Flags();
+        reload();        
     }else{
         alert('incorrect');
-        Flags();
+        reload();
     }
 }
 
@@ -325,10 +328,10 @@ let onClick1 = () => {
 
     if(answer1.text === firstNation.name){
         alert('correct');
-        Flags();
+        reload();
     }else{
         alert('incorrect');
-        Flags();
+        reload();
     }
 }
 
@@ -336,10 +339,10 @@ let onClick2 = () => {
 
     if(answer2.text === firstNation.name){
         alert('correct');
-        Flags();
+        reload();
     }else{
         alert('incorrect');
-        Flags();
+        reload();
     }
 }
 
@@ -347,10 +350,10 @@ let onClick3 = () => {
 
     if(answer3.text === firstNation.name){
         alert('correct');
-        Flags();
+        reload();
     }else{
         alert('incorrect');
-        Flags();
+        reload();
     }
 }
     
@@ -359,10 +362,10 @@ let onClick3 = () => {
             <CssBaseline />
             <Container maxWidth="md">
                 <Box sx={{ bgcolor: '#cfe8fc', height: '59vh'}}>
-                    <Container sx={{ height: '30vh', border: 'dashed', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <Container sx={{ height: '30vh', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         <img src={chosenFlag} alt="a flag" />
                     </Container>
-                    <Grid container spacing={{md: 0}} columns={{md: 4}} sx={{border: 'dashed', height: '30vh'}}>
+                    <Grid container spacing={{md: 0}} columns={{md: 4}} sx={{ height: '30vh'}}>
                         <Grid size={{md: 6}} sx={{height: '70px', display: 'flex', justifyContent: 'center'}}>
                             <Button onClick={onClick} variant="outlined" sx={{ width: 1000}}>{answer4.text}</Button>
                         </Grid>
@@ -373,9 +376,7 @@ let onClick3 = () => {
                             <Button onClick={onClick2} variant="outlined" sx={{width: 1000}}>{answer2.text}</Button>
                         </Grid>
                         <Grid size={{md: 6}} sx={{height: '70px', display: 'flex', justifyContent: 'center'}}>
-                            <Button onClick={() => {
-                                onClick3
-                            }} variant="outlined" sx={{width: 1000}}>{answer3.text}</Button>
+                            <Button onClick={onClick3} variant="outlined" sx={{width: 1000}}>{answer3.text}</Button>
                         </Grid>
                     </Grid>
                 </Box>
