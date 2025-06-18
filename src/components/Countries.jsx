@@ -233,7 +233,7 @@ export default function Countries(){
       let chosenCountry = countries[randomNum];
       let firstNation = new country(true, chosenFlag);
       
-      //Functions to prevent repetitions
+      //Functions to prevent repetitions and choose the option flags
       let chosenCountry1 = function(){
           const num = randomNum1();
           
@@ -309,15 +309,15 @@ export default function Countries(){
         location.reload();
     }
     
-    let onClick = () => {
+    let onClick = (event) => {
     
         if(answer4.text === firstNation.name){
             alert('correct');
             reload();        
-        }else{
-            alert('incorrect');
+        }else if (event.target === ){
+            alert('incorrect, that is the flag of ' + answer1.text + ' the correct answer is ' + answer4.text);
             reload();
-        }
+        }else if (answer2)
     }
     
     let onClick1 = () => {
@@ -360,22 +360,22 @@ export default function Countries(){
         <React.Fragment>
             <CssBaseline />
             <Container maxWidth="md">
-                <Box sx={{ bgcolor: '#cfe8fc', height: '70vh'}}>
-                <Container sx={{ height: '30vh',  textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Box sx={{ bgcolor: '#cfe8fc', height: '100vh'}}>
+                    <Container sx={{ height: '30vh',  textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                         {chosenCountry}
                     </Container>
                     <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3}}>
                         <Grid size={6}>
-                            <Button onClick={onClick}><img src={answer4.text} alt="a flag" /></Button>
+                            A<Button onClick={onClick}><img src={answer4.text} alt="a flag" /></Button>
                         </Grid>
                         <Grid size={6}>
-                           <Button onClick={onClick1}><img src={answer1.text} alt="a flag" /></Button>
+                           B<Button onClick={onClick1}><img src={answer1.text} alt="a flag" /></Button>
                         </Grid>
                         <Grid size={6}>
-                            <Button onClick={onClick2}><img src={answer2.text} alt="a flag" /></Button>
+                            C<Button onClick={onClick2}><img src={answer2.text} alt="a flag" /></Button>
                         </Grid>
                         <Grid size={6}>
-                           <Button onClick={onClick3}><img src={answer3.text} alt="a flag" /></Button>
+                           D<Button onClick={onClick3}><img src={answer3.text} alt="a flag" /></Button>
                         </Grid>
                     </Grid>
                 </Box>

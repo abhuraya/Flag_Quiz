@@ -199,7 +199,6 @@ import Venezuela from '../assets/Flags/Venezuela.png';
 import Yemen from '../assets/Flags/Yemen.png';
 import Zambia from '../assets/Flags/Zambia.png';
 import Zimbabwe from '../assets/Flags/Zimbabwe.png';
-import { useState } from "react";
 
 export default function Flags(){
 
@@ -207,23 +206,11 @@ let countries = ['Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anti
 let countryFlags = [Afghanistan, Albania, Algeria, Andorra, Angola, Antigua_and_Barbuda, Argentina, Armenia, Australia, Austria, Azerbaijan, Bahamas, Bahrain, Bangladesh, Barbados, Belarus, Belgium, Belize, Benin, Bhutan, Bolivia, Bosnia_and_Herzegovina, Botswana, Brazil, Brunei_Darussalam, Bulgaria, Burkina_Faso, Burundi, Cabo_Verde, Cambodia, Cameroon, Canada, Central_African_Republic, Chad, Chile, China, Colombia, Comoros, Congo, Costa_Rica, Cote_DIvoire, Croatia, Cuba, Cyprus, Czehia, Democratic_Peoples_Republic_of_Korea, Democratic_Republic_of_The_Congo, Denmark, Djibouti, Dominica, Dominican_Republic, Ecuador, Egypt, El_Salvador, Equiatorial_Guniea, Eritrea, Estonia, Eswatini, Ethiopia, Fiji, Finland, France, Gabon, Georgia, Germany, Ghana, Ginnea_Bissau, Greece, Grenada, Guatemala, Guinea, Guyana, Haiti, Honduras, Hungary, Iceland, India, Indonesia, Iran, Iraq, Ireland, Israel, Italy, Jamaica, Japan, Jordan, Kazakstan, Kenya, Kiribati, Kuwait, Kyrgystan, Lao_Peoples_Democratic_Republic, Latvia, Lebanon, Lesotho, Liberia, Libya, Lichtenstein, Lithuania, Luxembourg, Madagascar, Malawi, Malaysia, Maldives, Mali, Malta, Maratius, Marshall_Islands, Mauritania, Mexico, Micronesia, Monaco, Mongolia, Montenegro, Morocco, Mozambique, Myanmar, Namibia, Nauru, Nepal, Netherlands, New_Zealand, Nicaragua, Niger, Nigeria, North_Macedonia, Norway, Oman, Pakistan, Palau, Panama, Papua_New_Guinea, Paraguay, Peru, Philippines, Poland, Portugal, Qatar, Republic_of_Korea, Republic_of_Moldova, Romania, Russian_Federation, Rwanda, Saint_Kitts_and_Nevus, Saint_Lucia, Saint_Vincent_and_The_Grenadines, Samoa, San_Marino, Sao_Tome_and_Principe, Saudi_Arabia, Senegal, Serbia, Seychelles, Sierra_Leone, Singapore, Slovakia, Slovenia, Solomon_Islands, Somalia, South_Africa, South_Sudan, Spain, Sri_Lanka, Sudan, Suriname, Sweden, Switzerland, Syrian_Arab_Republic, Tajikistan, Thailand, The_Gambia, Timor_Leste, Togo, Tonga, Trinidad_and_Tobago, Tunisia, Turkey, Turkmenistan, Tuvalu, Uganda, Ukraine, United_Arab_Emirates, United_Kingfom_of_Great_Britain_and_Northern_Ireland, United_Republic_of_Tanzania, United_States_of_America, Uruguay, Uzbekistan, Vanatu, Venezuela, Yemen, Zambia, Zimbabwe];
 
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#1A2027',
-    }),
-  }));
-
 let randomNum = Math.floor(Math.random() * countryFlags.length)
 let randomNum1 = function (){
     return Math.floor(Math.random() * countries.length);
 }
 let a = randomNum1();
-let b = randomNum1();
 
 class country{
     constructor(correct, name){
@@ -319,7 +306,7 @@ let onClick = () => {
         alert('correct');
         reload();        
     }else{
-        alert('incorrect');
+        alert('incorrect, the correct answer is ' + firstNation.name);
         reload();
     }
 }
@@ -330,7 +317,7 @@ let onClick1 = () => {
         alert('correct');
         reload();
     }else{
-        alert('incorrect');
+        alert('incorrect, the correct answer is ' + firstNation.name);
         reload();
     }
 }
@@ -341,7 +328,7 @@ let onClick2 = () => {
         alert('correct');
         reload();
     }else{
-        alert('incorrect');
+        alert('incorrect, the correct answer is ' + firstNation.name);
         reload();
     }
 }
@@ -352,7 +339,7 @@ let onClick3 = () => {
         alert('correct');
         reload();
     }else{
-        alert('incorrect');
+        alert('incorrect the correct answer is ' + firstNation.name);
         reload();
     }
 }
