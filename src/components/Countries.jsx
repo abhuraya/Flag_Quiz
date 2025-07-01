@@ -314,10 +314,16 @@ export default function Countries(){
         if(answer4.text === firstNation.name){
             alert('correct');
             reload();        
-        }else if (event.target === ){
+        }else if (event.target === answer1){
             alert('incorrect, that is the flag of ' + answer1.text + ' the correct answer is ' + answer4.text);
             reload();
-        }else if (answer2)
+        }else if (event.target === answer2){
+            alert('incorrect, that is the flag of ' + answer2.text + ' the correct answer is ' + answer4.text);
+            reload();
+        }else if (event.target === answer3){
+            alert('incorrect, that is the flag of ' + answer3.text + ' the correct answer is ' + answer4.text);
+            reload();
+        }
     }
     
     let onClick1 = () => {
