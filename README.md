@@ -1,8 +1,36 @@
-# React + Vite
+# Flag Quiz
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Flag Quiz is an interactive geography game built with React. Players
+are shown a national flag and must select the correct country from the
+available answers.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+https://abhuraya.github.io/Flag_Quiz/
+
+## Features
+
+- Interactive multiple-choice flag questions
+- Immediate answer feedback
+- Score tracking
+- Multiple quiz pages and categories
+- Reusable React components
+- Responsive interface
+- Client-side routing
+
+## Technologies Used
+
+- React
+- JavaScript
+- Vite
+- React Router
+- Material UI
+- Bootstrap
+- CSS
+
+## Running the Project Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/abhuraya/Flag_Quiz.git
