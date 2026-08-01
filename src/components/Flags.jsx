@@ -19,6 +19,7 @@ function Flags() {
     const [questionIndex, setQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
+    const [answerHistory, setAnswerHistory] = useState([]);
     const [isFinished, setIsFinished] = useState(false);
 
     const currentQuestion = questions[questionIndex];
@@ -35,10 +36,24 @@ function Flags() {
         return undefined;
     }
 
-   if (timeLeft === 0) {
-    setTimedOut(true);
-    setSelectedAnswer("TIME_OUT");
-    return undefined;
+    if (timeLeft === 0) {
+        setTimedOut(true);
+        setSelectedAnswer("TIME_OUT");
+
+        setAnswerHistory(function (currentHistory) {
+            return [
+                ...currentHistory,
+                {
+                    country: currentQuestion.correctCountry.name,
+                    flag: currentQuestion.correctCountry.flag,
+                    selectedAnswer: null,
+                    isCorrect: false,
+                    timedOut: true
+                }
+            ];
+        });
+
+        return undefined;
     }
 
     const timerId = setTimeout(function () {
@@ -50,7 +65,10 @@ function Flags() {
             return function () {
                 clearTimeout(timerId);
             };
-    }, [timeLeft, selectedAnswer, isFinished]);
+    }, [timeLeft, 
+        selectedAnswer, 
+        isFinished, 
+        currentQuestion]);
                                                                 
     function startNewGame() {
         setQuestions(createGameSession(countries, QUESTION_COUNT));
@@ -60,6 +78,7 @@ function Flags() {
         setIsFinished(false);
         setTimedOut(false);
         setTimeLeft(QUESTION_TIME);
+        setAnswerHistory([]);
     }
 
   function handleAnswer(countryName) {
@@ -72,11 +91,24 @@ function Flags() {
 
         setSelectedAnswer(countryName);
 
-        if (isCorrect) {
-            setScore(function (currentScore) {
-                return currentScore + 1;
-            });
-        }
+        setAnswerHistory(function (currentHistory) {
+            return [
+                ...currentHistory,
+                {
+                    country: currentQuestion.correctCountry.name,
+                    flag: currentQuestion.correctCountry.flag,
+                    selectedAnswer: countryName,
+                    isCorrect,
+                    timedOut: false
+                }
+            ];
+        });
+
+            if (isCorrect) {
+                setScore(function (currentScore) {
+                    return currentScore + 1;
+                });
+            }
     }
 
     function handleNextQuestion() {
@@ -146,6 +178,57 @@ function Flags() {
                     <p className="best-score">
                         Best score: <strong>{bestScore}/{questions.length}</strong>
                     </p>
+                    <div className="answer-review">
+                        <h2>Question review</h2>
+
+                        <div className="review-list">
+                            {answerHistory.map(function (answer, index) {
+                                return (
+                                    <article
+                                        className={
+                                            answer.isCorrect
+                                                ? "review-item review-correct"
+                                                : "review-item review-incorrect"
+                                        }
+                                        key={`${answer.country}-${index}`}
+                                    >
+                                        <img
+                                            src={answer.flag}
+                                            alt={`Flag of ${answer.country}`}
+                                        />
+
+                                        <div className="review-details">
+                                            <div className="review-heading">
+                                                <span>Question {index + 1}</span>
+
+                                                <strong>
+                                                    {answer.isCorrect
+                                                        ? "Correct"
+                                                        : answer.timedOut
+                                                        ? "Timed out"
+                                                        : "Incorrect"}
+                                                </strong>
+                                            </div>
+
+                                            <p>
+                                                Correct answer:{" "}
+                                                <strong>{answer.country}</strong>
+                                            </p>
+
+                                            {!answer.isCorrect && !answer.timedOut && (
+                                                <p>
+                                                    Your answer:{" "}
+                                                    <strong>
+                                                        {answer.selectedAnswer}
+                                                    </strong>
+                                                </p>
+                                            )}
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    </div>
 
                     <div className="results-actions">
                        <button
