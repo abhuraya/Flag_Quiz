@@ -4,9 +4,7 @@ import { Link } from "react-router-dom";
 import countries from "../data/countries";
 import { createGameSession } from "../utils/quizHelpers";
 
-const [lastAnswerWasCorrect, setLastAnswerWasCorrect] = 
 
-useState(false);
 
 const QUESTION_COUNT = 10;
 const QUESTION_TIME = 15;
@@ -39,7 +37,6 @@ function Flags() {
 
    if (timeLeft === 0) {
     setTimedOut(true);
-    setLastAnswerWasCorrect(false);
     setSelectedAnswer("TIME_OUT");
     return undefined;
     }
@@ -74,7 +71,6 @@ function Flags() {
             countryName === currentQuestion.correctCountry.name;
 
         setSelectedAnswer(countryName);
-        setLastAnswerWasCorrect(isCorrect);
 
         if (isCorrect) {
             setScore(function (currentScore) {
@@ -107,7 +103,6 @@ function Flags() {
         setSelectedAnswer(null);
         setTimedOut(false);
         setTimeLeft(QUESTION_TIME);
-        setLastAnswerWasCorrect(false);
     }
 
     function getAnswerClass(countryName) {
