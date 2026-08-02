@@ -12,7 +12,24 @@ import Grid from "@mui/material/Grid2";
 import countries from "../data/countries";
 
 const TOTAL_QUESTIONS = 10;
-const QUESTION_TIME = 15;
+
+const DIFFICULTIES = {
+    easy: {
+        label: "Easy",
+        time: 20,
+        options: 3,
+    },
+    medium: {
+        label: "Medium",
+        time: 15,
+        options: 4,
+    },
+    hard: {
+        label: "Hard",
+        time: 10,
+        options: 6,
+    },
+};
 
 function shuffle(array) {
     return [...array].sort(function () {
@@ -20,8 +37,11 @@ function shuffle(array) {
     });
 }
 
-function createQuestion() {
-    const answerOptions = shuffle(countries).slice(0, 4);
+function createQuestion(optionCount) {
+    const answerOptions = shuffle(countries).slice(
+        0,
+        optionCount
+    );
 
     const correctCountry =
         answerOptions[
@@ -35,7 +55,12 @@ function createQuestion() {
 }
 
 export default function Countries() {
-    const [question, setQuestion] = useState(createQuestion);
+    const [difficulty, setDifficulty] = useState(null);
+
+    const difficultySettings = difficulty
+    ? DIFFICULTIES[difficulty]
+    : null;
+    const [question, setQuestion] = useState(null);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
 
@@ -49,35 +74,70 @@ export default function Countries() {
 
 
     const [questionNumber, setQuestionNumber] = useState(1);
-    const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+    const [timeLeft, setTimeLeft] = useState(0);
     const [isFinished, setIsFinished] = useState(false);
     const [timedOut, setTimedOut] = useState(false);
 
     const isAnswered = selectedAnswer !== null || timedOut;
 
+   useEffect(
+    function () {
+        if (
+            !difficulty ||
+            !question ||
+            isFinished ||
+            isAnswered
+        ) {
+            return;
+        }
+
+        if (timeLeft === 0) {
+            setTimedOut(true);
+            return;
+        }
+
+        const timer = setTimeout(function () {
+            setTimeLeft(function (currentTime) {
+                return currentTime - 1;
+            });
+        }, 1000);
+
+        return function () {
+            clearTimeout(timer);
+        };
+    },
+    [
+        difficulty,
+        question,
+        timeLeft,
+        isAnswered,
+        isFinished,
+    ]
+);
+
     useEffect(
-            function () {
-                if (isFinished || isAnswered) {
-                    return;
-                }
+        function () {
+            if (!question) {
+                return;
+            }
 
-                if (timeLeft === 0) {
-                    setTimedOut(true);
-                    return;
-                }
+            question.options.forEach(function (country) {
+                const image = new Image();
+                image.src = country.flag;
+            });
+        },
+        [question]
+    );
 
-                const timer = setTimeout(function () {
-                    setTimeLeft(function (currentTime) {
-                        return currentTime - 1;
-                    });
-                }, 1000);
+ function handleDifficultySelect(selectedDifficulty) {
+    const settings = DIFFICULTIES[selectedDifficulty];
 
-                return function () {
-                    clearTimeout(timer);
-                };
-            },
-            [timeLeft, isAnswered, isFinished]
-        );
+    setDifficulty(selectedDifficulty);
+    setQuestion(createQuestion(settings.options));
+    setSelectedAnswer(null);
+    setTimedOut(false);
+    setTimeLeft(settings.time);
+}
 
     function handleAnswer(country) {
         if (isAnswered) {
@@ -93,7 +153,7 @@ export default function Countries() {
         }
     }
 
-  function handleNextQuestion() {
+function handleNextQuestion() {
     const isLastQuestion =
         questionNumber === TOTAL_QUESTIONS;
 
@@ -111,25 +171,173 @@ export default function Countries() {
         return;
     }
 
-    setQuestion(createQuestion());
+    setQuestion(
+        createQuestion(difficultySettings.options)
+    );
     setSelectedAnswer(null);
     setTimedOut(false);
-    setTimeLeft(QUESTION_TIME);
+    setTimeLeft(difficultySettings.time);
 
     setQuestionNumber(function (currentNumber) {
         return currentNumber + 1;
     });
 }
 
-    function handleRestart() {
-        setQuestion(createQuestion());
-        setSelectedAnswer(null);
-        setScore(0);
-        setQuestionNumber(1);
-        setTimeLeft(QUESTION_TIME);
-        setIsFinished(false);
-        setTimedOut(false);
-    }
+  function handleRestart() {
+    setQuestion(
+        createQuestion(difficultySettings.options)
+    );
+    setSelectedAnswer(null);
+    setScore(0);
+    setQuestionNumber(1);
+    setTimeLeft(difficultySettings.time);
+    setIsFinished(false);
+    setTimedOut(false);
+}
+
+function handleChangeDifficulty() {
+    setDifficulty(null);
+    setQuestion(null);
+    setSelectedAnswer(null);
+    setScore(0);
+    setQuestionNumber(1);
+    setTimeLeft(0);
+    setIsFinished(false);
+    setTimedOut(false);
+}
+
+    if (!difficulty) {
+    return (
+        <>
+            <CssBaseline />
+
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    background:
+                        "linear-gradient(180deg, #071426 0%, #0d2038 100%)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    py: 5,
+                }}
+            >
+                <Container maxWidth="sm">
+                    <Button
+                        component={Link}
+                        to="/"
+                        sx={{
+                            color: "rgba(255,255,255,0.75)",
+                            mb: 4,
+                        }}
+                    >
+                        ← Home
+                    </Button>
+
+                    <Box sx={{ textAlign: "center" }}>
+                        <Typography
+                            sx={{
+                                color: "#5eead4",
+                                fontWeight: 700,
+                                letterSpacing: 2,
+                                textTransform: "uppercase",
+                                mb: 1,
+                            }}
+                        >
+                            Find the Flag
+                        </Typography>
+
+                        <Typography
+                            component="h1"
+                            sx={{
+                                fontSize: {
+                                    xs: "2.4rem",
+                                    md: "3.8rem",
+                                },
+                                fontWeight: 800,
+                                mb: 2,
+                            }}
+                        >
+                            Choose Difficulty
+                        </Typography>
+
+                        <Typography
+                            sx={{
+                                color: "rgba(255,255,255,0.65)",
+                                mb: 5,
+                            }}
+                        >
+                            Higher difficulties give you less time and
+                            more flags to choose from.
+                        </Typography>
+
+                        <Box
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: 2,
+                            }}
+                        >
+                            {Object.entries(DIFFICULTIES).map(
+                                function ([key, settings]) {
+                                    return (
+                                        <Button
+                                            key={key}
+                                            onClick={function () {
+                                                handleDifficultySelect(
+                                                    key
+                                                );
+                                            }}
+                                            sx={{
+                                                display: "flex",
+                                                justifyContent:
+                                                    "space-between",
+                                                backgroundColor:
+                                                    "rgba(255,255,255,0.07)",
+                                                color: "white",
+                                                border:
+                                                    "1px solid rgba(255,255,255,0.15)",
+                                                borderRadius: "16px",
+                                                px: 3,
+                                                py: 2,
+
+                                                "&:hover": {
+                                                    backgroundColor:
+                                                        "rgba(94,234,212,0.12)",
+                                                    borderColor:
+                                                        "#5eead4",
+                                                },
+                                            }}
+                                        >
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: 800,
+                                                    fontSize: "1.2rem",
+                                                }}
+                                            >
+                                                {settings.label}
+                                            </Typography>
+
+                                            <Typography
+                                                sx={{
+                                                    color:
+                                                        "rgba(255,255,255,0.65)",
+                                                }}
+                                            >
+                                                {settings.time}s ·{" "}
+                                                {settings.options} flags
+                                            </Typography>
+                                        </Button>
+                                    );
+                                }
+                            )}
+                        </Box>
+                    </Box>
+                </Container>
+            </Box>
+        </>
+    );
+}
 
     if (isFinished) {
         return (
@@ -385,6 +593,27 @@ export default function Countries() {
                             <Box>
                                 <Typography
                                     sx={{
+                                        color: "rgba(255,255,255,0.5)",
+                                        fontSize: "0.8rem",
+                                        textTransform: "uppercase",
+                                    }}
+                                >
+                                    Level
+                                </Typography>
+
+                                <Typography
+                                    sx={{
+                                        fontWeight: 800,
+                                        fontSize: "1.2rem",
+                                    }}
+                                >
+                                    {difficultySettings.label}
+                                </Typography>
+                            </Box>
+
+                            <Box>
+                                <Typography
+                                    sx={{
                                         color:
                                             "rgba(255,255,255,0.5)",
                                         fontSize: "0.8rem",
@@ -393,6 +622,7 @@ export default function Countries() {
                                 >
                                     Time
                                 </Typography>
+
 
                                 <Typography
                                     sx={{
@@ -514,6 +744,10 @@ export default function Countries() {
                                     size={{
                                         xs: 12,
                                         sm: 6,
+                                         md:
+                                                difficultySettings.options === 6
+                                                    ? 4
+                                                    : 6,
                                     }}
                                 >
                                     <Button
@@ -524,8 +758,11 @@ export default function Countries() {
                                         disabled={isAnswered}
                                         sx={{
                                             height: {
-                                                xs: "180px",
-                                                md: "220px",
+                                                  xs: "170px",
+                                                    md:
+                                                        difficultySettings.options === 6
+                                                            ? "180px"
+                                                            : "220px",
                                             },
                                             backgroundColor,
                                             border: `2px solid ${borderColor}`,
@@ -597,6 +834,27 @@ export default function Countries() {
                             </Typography>
 
                             <Button
+                                onClick={handleChangeDifficulty}
+                                sx={{
+                                    color: "white",
+                                    border:
+                                        "1px solid rgba(255,255,255,0.25)",
+                                    borderRadius: "12px",
+                                    px: 4,
+                                    py: 1.3,
+
+                                    "&:hover": {
+                                        borderColor: "#5eead4",
+                                        backgroundColor:
+                                            "rgba(94,234,212,0.08)",
+                                    },
+                                }}
+                            >
+                                Change Difficulty
+                            </Button>
+
+                            <Button
+
                                 variant="contained"
                                 onClick={handleNextQuestion}
                                 sx={{

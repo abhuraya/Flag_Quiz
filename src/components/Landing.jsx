@@ -35,7 +35,7 @@ function Landing() {
                             className="landing-secondary-button"
                             to="/countries"
                         >
-                            Explore countries
+                            Find the flag
                         </Link>
                     </div>
 

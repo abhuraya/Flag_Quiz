@@ -833,3 +833,111 @@ button:disabled {
         gap: 3px;
     }
 }
+
+
+.difficulty-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 32px 0;
+}
+
+.difficulty-card {
+    width: 100%;
+    min-height: 180px;
+    padding: 24px;
+    color: #263149;
+    text-align: left;
+    cursor: pointer;
+    background-color: #ffffff;
+    border: 2px solid #dfe5ef;
+    border-radius: 18px;
+    box-shadow: 0 12px 28px rgba(46, 62, 98, 0.08);
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.difficulty-card:hover {
+    transform: translateY(-5px);
+    background-color: #f8f9ff;
+    border-color: #5b75ff;
+    box-shadow: 0 18px 36px rgba(67, 88, 167, 0.15);
+}
+
+.difficulty-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.difficulty-name {
+    color: #172033;
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+.difficulty-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: #5b75ff;
+    font-size: 1.35rem;
+    background-color: #eef1ff;
+    border-radius: 50%;
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.difficulty-card:hover .difficulty-arrow {
+    transform: translateX(4px);
+    background-color: #e2e7ff;
+}
+
+.difficulty-card p {
+    margin: 0 0 10px;
+    color: #667087;
+    line-height: 1.5;
+}
+
+.difficulty-details {
+    color: #7a8498;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.difficulty-easy:hover {
+    border-color: #22a06b;
+    background-color: #f3fbf7;
+}
+
+.difficulty-medium:hover {
+    border-color: #5b75ff;
+    background-color: #f5f7ff;
+}
+
+.difficulty-hard:hover {
+    border-color: #dc4c64;
+    background-color: #fff6f7;
+}
+
+.difficulty-home-link {
+    display: inline-flex;
+    margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+    .difficulty-options {
+        grid-template-columns: 1fr;
+    }
+
+    .difficulty-card {
+        min-height: 0;
+    }
+}

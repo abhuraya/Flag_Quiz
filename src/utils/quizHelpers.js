@@ -13,7 +13,7 @@ export function shuffleArray(items) {
     return shuffled;
 }
 
-export function createQuestion(countries) {
+export function createQuestion(countries, optionCount = 4) {
     const correctCountry =
         countries[Math.floor(Math.random() * countries.length)];
 
@@ -21,20 +21,24 @@ export function createQuestion(countries) {
         countries.filter(function (country) {
             return country.name !== correctCountry.name;
         })
-    ).slice(0, 3);
+    ).slice(0, optionCount - 1);
 
     const options = shuffleArray([
         correctCountry,
-        ...incorrectCountries
+        ...incorrectCountries,
     ]);
 
     return {
         correctCountry,
-        options
+        options,
     };
 }
 
-export function createGameSession(countries, questionCount = 10) {
+export function createGameSession(
+    countries,
+    questionCount = 10,
+    optionCount = 4
+) {
     const selectedCountries = shuffleArray(countries).slice(
         0,
         Math.min(questionCount, countries.length)
@@ -45,14 +49,14 @@ export function createGameSession(countries, questionCount = 10) {
             countries.filter(function (country) {
                 return country.name !== correctCountry.name;
             })
-        ).slice(0, 3);
+        ).slice(0, optionCount - 1);
 
         return {
             correctCountry,
             options: shuffleArray([
                 correctCountry,
-                ...incorrectCountries
-            ])
+                ...incorrectCountries,
+            ]),
         };
     });
 }
