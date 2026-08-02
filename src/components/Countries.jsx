@@ -38,13 +38,23 @@ export default function Countries() {
     const [question, setQuestion] = useState(createQuestion);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
+
+    const [bestScore, setBestScore] = useState(function () {
+    const savedBestScore = localStorage.getItem(
+            "countriesQuizBestScore"
+        );
+
+        return savedBestScore ? Number(savedBestScore) : 0;
+    });
+
+
     const [questionNumber, setQuestionNumber] = useState(1);
     const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
     const [isFinished, setIsFinished] = useState(false);
     const [timedOut, setTimedOut] = useState(false);
 
     const isAnswered = selectedAnswer !== null || timedOut;
-    
+
     useEffect(
             function () {
                 if (isFinished || isAnswered) {
@@ -83,24 +93,33 @@ export default function Countries() {
         }
     }
 
-    function handleNextQuestion() {
-        const isLastQuestion =
-            questionNumber === TOTAL_QUESTIONS;
+  function handleNextQuestion() {
+    const isLastQuestion =
+        questionNumber === TOTAL_QUESTIONS;
 
-        if (isLastQuestion) {
-            setIsFinished(true);
-            return;
+    if (isLastQuestion) {
+        if (score > bestScore) {
+            setBestScore(score);
+
+            localStorage.setItem(
+                "countriesQuizBestScore",
+                String(score)
+            );
         }
 
-        setQuestion(createQuestion());
-        setSelectedAnswer(null);
-        setTimedOut(false);
-        setTimeLeft(QUESTION_TIME);
-
-        setQuestionNumber(function (currentNumber) {
-            return currentNumber + 1;
-        });
+        setIsFinished(true);
+        return;
     }
+
+    setQuestion(createQuestion());
+    setSelectedAnswer(null);
+    setTimedOut(false);
+    setTimeLeft(QUESTION_TIME);
+
+    setQuestionNumber(function (currentNumber) {
+        return currentNumber + 1;
+    });
+}
 
     function handleRestart() {
         setQuestion(createQuestion());
@@ -172,6 +191,7 @@ export default function Countries() {
                             >
                                 Your Score
                             </Typography>
+                            
 
                             <Typography
                                 sx={{
@@ -187,7 +207,15 @@ export default function Countries() {
                             >
                                 {score}/{TOTAL_QUESTIONS}
                             </Typography>
-
+                            <Typography
+                                sx={{
+                                    color: "rgba(255,255,255,0.65)",
+                                    fontWeight: 700,
+                                    mb: 2,
+                                }}
+                            >
+                                Best score: {bestScore}/{TOTAL_QUESTIONS}
+                            </Typography>        
                             <Typography
                                 sx={{
                                     color: "rgba(255,255,255,0.7)",
