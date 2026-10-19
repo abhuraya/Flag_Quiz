@@ -640,7 +640,7 @@ function handleChangeDifficulty() {
                             <span>{quizMode === "timed" ? "Time left" : "Time"}</span>
                             <strong>{quizMode === "timed" ? formatTime(modeTimeLeft) : `${timeLeft}s`}</strong>
                         </div>
-                        <div className={`multiplier-stat multiplier-level-${((currentMultiplier - 1) % 6) + 1}`} role="status" aria-live="polite">
+                        <div className={`multiplier-stat multiplier-level-${((currentMultiplier - 1) % 10) + 1}`} role="status" aria-live="polite">
                             <span>Multiplier</span>
                             <strong>{currentMultiplier}×</strong>
                         </div>
