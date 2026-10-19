@@ -1,5 +1,5 @@
-const projectUrl = import.meta.env.VITE_SUPABASE_URL?.replace(/\/$/, "");
-const publicKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const projectUrl = "https://bconjnfwdmotquwukfsz.supabase.co";
+const publicKey = "sb_publishable_BaR2QxJT8FawfhabvRRTDQ_kT-maRga";
 const tableName = "flag_quiz_scores";
 
 export const leaderboardConfigured = Boolean(projectUrl && publicKey);
@@ -13,7 +13,6 @@ async function requestLeaderboard(path, options = {}) {
         ...options,
         headers: {
             apikey: publicKey,
-            Authorization: `Bearer ${publicKey}`,
             "Content-Type": "application/json",
             ...options.headers,
         },
