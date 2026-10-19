@@ -387,6 +387,24 @@ button:disabled {
     box-shadow: 0 14px 28px rgba(91, 117, 255, 0.34);
 }
 
+.next-question-button:not(.is-ready) {
+    color: #8791a5;
+    background: #e5e9f0;
+    box-shadow: none;
+    opacity: 0.82;
+}
+
+.next-question-button:not(.is-ready):hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.next-question-button.is-ready {
+    box-shadow:
+        0 0 0 3px rgba(91, 117, 255, 0.14),
+        0 10px 24px rgba(91, 117, 255, 0.32);
+}
+
 .secondary-action {
     border: 1px solid #d8deea;
     background-color: #ffffff;

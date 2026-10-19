@@ -696,20 +696,19 @@ function handleChangeDifficulty() {
                     })}
                 </div>
 
-                {selectedAnswer !== null && (
-                    <div className="feedback-area">
-                        <button
-                            className="primary-action"
-                            onClick={handleNextQuestion}
-                        >
-                            {quizMode === "timed"
-                                ? "Next question"
-                                : questionIndex === questions.length - 1
-                                ? "See results"
-                                : "Next question"}
-                        </button>
-                    </div>
-                )}
+                <div className="feedback-area">
+                    <button
+                        className={`primary-action next-question-button ${selectedAnswer !== null ? "is-ready" : ""}`}
+                        onClick={handleNextQuestion}
+                        disabled={selectedAnswer === null}
+                    >
+                        {quizMode === "timed"
+                            ? "Next question"
+                            : questionIndex === questions.length - 1
+                            ? "See results"
+                            : "Next question"}
+                    </button>
+                </div>
             </section>
         </main>
     );
