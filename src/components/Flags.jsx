@@ -1,12 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 import countries from "../data/countries";
 import { createGameSession } from "../utils/quizHelpers";
+import Leaderboard from "./Leaderboard";
+import { leaderboardConfigured, submitLeaderboardScore } from "../utils/leaderboard";
 
 
 
 const QUESTION_COUNT = 10;
+const TIMED_MODE_SECONDS = 5 * 60;
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainder = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+}
 
 const DIFFICULTIES = {
     easy: {
@@ -27,6 +36,7 @@ const DIFFICULTIES = {
 };
 
 function Flags() {
+    const [quizMode, setQuizMode] = useState(null);
     const [difficulty, setDifficulty] = useState(null);
     const [questions, setQuestions] = useState([]);
 
@@ -35,6 +45,9 @@ function Flags() {
         : null;
 
     const [questionIndex, setQuestionIndex] = useState(0);
+    const [questionNumber, setQuestionNumber] = useState(1);
+    const [modeTimeLeft, setModeTimeLeft] = useState(TIMED_MODE_SECONDS);
+    const modeEndsAtRef = useRef(null);
     const [score, setScore] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerHistory, setAnswerHistory] = useState([]);
@@ -48,6 +61,11 @@ function Flags() {
 
     const [timeLeft, setTimeLeft] = useState(0);
     const [timedOut, setTimedOut] = useState(false);
+    const [playerName, setPlayerName] = useState("");
+    const [scoreSubmitStatus, setScoreSubmitStatus] = useState("");
+    const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
+    const [isSubmittingScore, setIsSubmittingScore] = useState(false);
+    const [scoreSaved, setScoreSaved] = useState(false);
     const [bestScore, setBestScore] = useState(function () {
     const savedBestScore = localStorage.getItem("flagQuizBestScore");
 
@@ -58,6 +76,7 @@ useEffect(
     function () {
         if (
             !difficulty ||
+            quizMode === "timed" ||
             !currentQuestion ||
             selectedAnswer !== null ||
             isFinished
@@ -98,6 +117,7 @@ useEffect(
         };
     },
     [
+        quizMode,
         difficulty,
         timeLeft,
         selectedAnswer,
@@ -105,6 +125,35 @@ useEffect(
         currentQuestion,
     ]
 );
+
+useEffect(function () {
+    if (quizMode !== "timed" || !difficulty || isFinished) {
+        return undefined;
+    }
+
+    if (!modeEndsAtRef.current) {
+        modeEndsAtRef.current = Date.now() + TIMED_MODE_SECONDS * 1000;
+    }
+
+    function updateModeTimer() {
+        const remaining = Math.max(
+            0,
+            Math.ceil((modeEndsAtRef.current - Date.now()) / 1000)
+        );
+        setModeTimeLeft(remaining);
+
+        if (remaining === 0) {
+            setIsFinished(true);
+        }
+    }
+
+    updateModeTimer();
+    const timerId = window.setInterval(updateModeTimer, 250);
+
+    return function () {
+        window.clearInterval(timerId);
+    };
+}, [quizMode, difficulty, isFinished]);
 
 useEffect(
     function () {
@@ -129,6 +178,10 @@ useEffect(
     const settings = DIFFICULTIES[selectedDifficulty];
 
     setDifficulty(selectedDifficulty);
+    modeEndsAtRef.current = quizMode === "timed"
+        ? Date.now() + TIMED_MODE_SECONDS * 1000
+        : null;
+    setModeTimeLeft(TIMED_MODE_SECONDS);
 
     setQuestions(
         createGameSession(
@@ -139,6 +192,7 @@ useEffect(
     );
 
     setQuestionIndex(0);
+    setQuestionNumber(1);
     setScore(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
@@ -148,6 +202,12 @@ useEffect(
 }
                                                                 
  function startNewGame() {
+    setScoreSaved(false);
+    setScoreSubmitStatus("");
+    modeEndsAtRef.current = quizMode === "timed"
+        ? Date.now() + TIMED_MODE_SECONDS * 1000
+        : null;
+    setModeTimeLeft(TIMED_MODE_SECONDS);
     setQuestions(
         createGameSession(
             countries,
@@ -157,6 +217,7 @@ useEffect(
     );
 
     setQuestionIndex(0);
+    setQuestionNumber(1);
     setScore(0);
     setSelectedAnswer(null);
     setIsFinished(false);
@@ -166,15 +227,19 @@ useEffect(
 }
 
 function handleChangeDifficulty() {
+    modeEndsAtRef.current = null;
+    setQuizMode(null);
     setDifficulty(null);
     setQuestions([]);
     setQuestionIndex(0);
+    setQuestionNumber(1);
     setScore(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
     setIsFinished(false);
     setTimedOut(false);
     setTimeLeft(0);
+    setModeTimeLeft(TIMED_MODE_SECONDS);
 }
 
   function handleAnswer(countryName) {
@@ -211,7 +276,10 @@ function handleChangeDifficulty() {
         const isLastQuestion =
             questionIndex === questions.length - 1;
 
-         if (isLastQuestion) {
+        if (quizMode === "timed" && isLastQuestion) {
+            setQuestions(createGameSession(countries, QUESTION_COUNT, difficultySettings.options));
+            setQuestionIndex(0);
+        } else if (isLastQuestion) {
             if (score > bestScore) {
                 setBestScore(score);
                 localStorage.setItem(
@@ -224,13 +292,39 @@ function handleChangeDifficulty() {
             return;
         }
 
-        setQuestionIndex(function (currentIndex) {
-            return currentIndex + 1;
+        if (!(quizMode === "timed" && isLastQuestion)) {
+            setQuestionIndex(function (currentIndex) {
+                return currentIndex + 1;
+            });
+        }
+        setQuestionNumber(function (currentNumber) {
+            return currentNumber + 1;
         });
 
         setSelectedAnswer(null);
         setTimedOut(false);
-        setTimeLeft(difficultySettings.time);
+        if (quizMode !== "timed") {
+            setTimeLeft(difficultySettings.time);
+        }
+    }
+
+    async function handleSaveTimedScore(event) {
+        event.preventDefault();
+        setIsSubmittingScore(true);
+        setScoreSubmitStatus("");
+
+        try {
+            await submitLeaderboardScore(playerName, score);
+            setScoreSaved(true);
+            setScoreSubmitStatus("Your score is on the shared leaderboard.");
+            setLeaderboardRefresh(function (current) {
+                return current + 1;
+            });
+        } catch (error) {
+            setScoreSubmitStatus(error.message || "Your score could not be saved.");
+        } finally {
+            setIsSubmittingScore(false);
+        }
     }
 
     function getAnswerClass(countryName) {
@@ -249,6 +343,37 @@ function handleChangeDifficulty() {
         return "answer-button disabled-answer";
     }
 
+    if (!quizMode) {
+        return (
+            <main className="quiz-page">
+                <section className="results-card">
+                    <p className="quiz-label">FLAG CHALLENGE</p>
+                    <h1>Choose a game mode</h1>
+                    <p>Play a focused ten-question round or race the clock for five minutes.</p>
+                    <div className="difficulty-options game-mode-options">
+                        <button className="difficulty-card difficulty-medium" onClick={() => setQuizMode("classic")}>
+                            <div className="difficulty-card-top">
+                                <span className="difficulty-name">Classic</span>
+                                <span className="difficulty-arrow">→</span>
+                            </div>
+                            <p>Ten flags with a timer for each question.</p>
+                            <span className="difficulty-details">Choose your difficulty</span>
+                        </button>
+                        <button className="difficulty-card difficulty-hard" onClick={() => setQuizMode("timed")}>
+                            <div className="difficulty-card-top">
+                                <span className="difficulty-name">5-minute challenge</span>
+                                <span className="difficulty-arrow">→</span>
+                            </div>
+                            <p>Answer as many flags as you can before time runs out.</p>
+                            <span className="difficulty-details">Five minutes total</span>
+                        </button>
+                    </div>
+                    <Link className="secondary-action difficulty-home-link" to="/">Back home</Link>
+                </section>
+            </main>
+        );
+    }
+
     if (!difficulty) {
         return (
             <main className="quiz-page">
@@ -258,8 +383,9 @@ function handleChangeDifficulty() {
                     <h1>Choose difficulty</h1>
 
                     <p>
-                        Higher difficulties give you less time and
-                        more countries to choose from.
+                        {quizMode === "timed"
+                            ? "Pick how many countries appear for each flag. The five-minute clock keeps running between questions."
+                            : "Higher difficulties give you less time and more countries to choose from."}
                     </p>
 
                     <div className="difficulty-options">
@@ -284,7 +410,9 @@ function handleChangeDifficulty() {
                                         </div>
 
                                         <p>
-                                            {settings.time} seconds per question
+                                            {quizMode === "timed"
+                                                ? "Five minutes total"
+                                                : `${settings.time} seconds per question`}
                                         </p>
 
                                         <span className="difficulty-details">
@@ -316,22 +444,25 @@ function handleChangeDifficulty() {
                     <h1>Nice work!</h1>
 
                     <p className="final-score">
-                        You scored{" "}
-                        <strong>
-                            {score} out of {questions.length}
-                        </strong>
+                        {quizMode === "timed" ? (
+                            <>You scored <strong>{score} correct</strong> in five minutes.</>
+                        ) : (
+                            <>You scored <strong>{score} out of {questions.length}</strong></>
+                        )}
                     </p>
 
                     <p>
-                        That is{" "}
-                        {Math.round(
-                            (score / questions.length) * 100
-                        )}
-                        % correct.
+                        {quizMode === "timed"
+                            ? answerHistory.length > 0
+                                ? `Accuracy: ${Math.round((score / answerHistory.length) * 100)}% of answered flags.`
+                                : "No flags were answered this round."
+                            : `That is ${Math.round((score / questions.length) * 100)}% correct.`}
                     </p>
-                    <p className="best-score">
-                        Best score: <strong>{bestScore}/{questions.length}</strong>
-                    </p>
+                    {quizMode === "classic" && (
+                        <p className="best-score">
+                            Best score: <strong>{bestScore}/{questions.length}</strong>
+                        </p>
+                    )}
                     <div className="answer-review">
                         <h2>Question review</h2>
 
@@ -384,6 +515,37 @@ function handleChangeDifficulty() {
                         </div>
                     </div>
 
+                    {quizMode === "timed" && (
+                        <div className="timed-score-panel">
+                            <h2>Shared leaderboard</h2>
+                            {leaderboardConfigured ? (
+                                <form className="score-submit-form" onSubmit={handleSaveTimedScore}>
+                                    <label htmlFor="leaderboard-name">Add your name to the board</label>
+                                    <div className="score-submit-controls">
+                                        <input
+                                            id="leaderboard-name"
+                                            name="playerName"
+                                            value={playerName}
+                                            onChange={(event) => setPlayerName(event.target.value)}
+                                            maxLength={24}
+                                            autoComplete="nickname"
+                                            required
+                                            placeholder="Your name"
+                                        />
+                                        <button className="primary-action" type="submit" disabled={isSubmittingScore || scoreSaved}>
+                                            {isSubmittingScore ? "Saving…" : scoreSaved ? "Score saved" : "Save score"}
+                                        </button>
+                                    </div>
+                                    <p className="score-submit-status" aria-live="polite">{scoreSubmitStatus}</p>
+                                </form>
+                            ) : (
+                                <p className="score-submit-status">
+                                    Connect the Supabase project to save scores for everyone.
+                                </p>
+                            )}
+                            <Leaderboard refreshKey={leaderboardRefresh} limit={10} />
+                        </div>
+                    )}
                     <div className="results-actions">
                        <button
                             className="primary-action"
@@ -396,7 +558,7 @@ function handleChangeDifficulty() {
                             className="secondary-action"
                             onClick={handleChangeDifficulty}
                         >
-                            Change difficulty
+                            Change game mode
                         </button>
 
                         <Link className="secondary-action" to="/">
@@ -420,9 +582,9 @@ function handleChangeDifficulty() {
 
                     <div className="quiz-stats">
                         <div>
-                            <span>Question</span>
+                            <span>{quizMode === "timed" ? "Question" : "Question"}</span>
                             <strong>
-                                {questionIndex + 1}/{questions.length}
+                                {quizMode === "timed" ? questionNumber : `${questionIndex + 1}/${questions.length}`}
                             </strong>
                         </div>
 
@@ -430,9 +592,9 @@ function handleChangeDifficulty() {
                             <span>Score</span>
                             <strong>{score}</strong>
                         </div>
-                        <div className={timeLeft <= 5 ? "timer timer-warning" : "timer"}>
-                            <span>Time</span>
-                            <strong>{timeLeft}s</strong>
+                        <div className={(quizMode === "timed" ? modeTimeLeft : timeLeft) <= 10 ? "timer timer-warning" : "timer"}>
+                            <span>{quizMode === "timed" ? "Time left" : "Time"}</span>
+                            <strong>{quizMode === "timed" ? formatTime(modeTimeLeft) : `${timeLeft}s`}</strong>
                         </div>
                     </div>
                 </header>
@@ -442,9 +604,9 @@ function handleChangeDifficulty() {
                         className="progress-value"
                         style={{
                             width: `${
-                                ((questionIndex + 1) /
-                                    questions.length) *
-                                100
+                                quizMode === "timed"
+                                    ? ((TIMED_MODE_SECONDS - modeTimeLeft) / TIMED_MODE_SECONDS) * 100
+                                    : ((questionIndex + 1) / questions.length) * 100
                             }%`
                         }}
                     />
@@ -490,7 +652,9 @@ function handleChangeDifficulty() {
                             className="primary-action"
                             onClick={handleNextQuestion}
                         >
-                            {questionIndex === questions.length - 1
+                            {quizMode === "timed"
+                                ? "Next question"
+                                : questionIndex === questions.length - 1
                                 ? "See results"
                                 : "Next question"}
                         </button>
