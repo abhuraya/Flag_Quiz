@@ -206,12 +206,14 @@ useEffect(
     setScore(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
+    setExitRequested(false);
     setIsFinished(false);
     setTimedOut(false);
     setTimeLeft(settings.time);
 }
                                                                 
  function startNewGame() {
+    setExitRequested(false);
     setScoreSaved(false);
     setScoreSubmitStatus("");
     modeEndsAtRef.current = quizMode === "timed"
