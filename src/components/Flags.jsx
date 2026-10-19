@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 
 import countries from "../data/countries";
 import { createGameSession } from "../utils/quizHelpers";
+import Leaderboard from "./Leaderboard";
+import { leaderboardConfigured, submitLeaderboardScore } from "../utils/leaderboard";
 
 
 
@@ -59,6 +61,10 @@ function Flags() {
 
     const [timeLeft, setTimeLeft] = useState(0);
     const [timedOut, setTimedOut] = useState(false);
+    const [playerName, setPlayerName] = useState("");
+    const [scoreSubmitStatus, setScoreSubmitStatus] = useState("");
+    const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
+    const [isSubmittingScore, setIsSubmittingScore] = useState(false);
     const [bestScore, setBestScore] = useState(function () {
     const savedBestScore = localStorage.getItem("flagQuizBestScore");
 
@@ -299,6 +305,24 @@ function handleChangeDifficulty() {
         }
     }
 
+    async function handleSaveTimedScore(event) {
+        event.preventDefault();
+        setIsSubmittingScore(true);
+        setScoreSubmitStatus("");
+
+        try {
+            await submitLeaderboardScore(playerName, score);
+            setScoreSubmitStatus("Your score is on the shared leaderboard.");
+            setLeaderboardRefresh(function (current) {
+                return current + 1;
+            });
+        } catch (error) {
+            setScoreSubmitStatus(error.message || "Your score could not be saved.");
+        } finally {
+            setIsSubmittingScore(false);
+        }
+    }
+
     function getAnswerClass(countryName) {
         if (selectedAnswer === null) {
             return "answer-button";
@@ -487,6 +511,37 @@ function handleChangeDifficulty() {
                         </div>
                     </div>
 
+                    {quizMode === "timed" && (
+                        <div className="timed-score-panel">
+                            <h2>Shared leaderboard</h2>
+                            {leaderboardConfigured ? (
+                                <form className="score-submit-form" onSubmit={handleSaveTimedScore}>
+                                    <label htmlFor="leaderboard-name">Add your name to the board</label>
+                                    <div className="score-submit-controls">
+                                        <input
+                                            id="leaderboard-name"
+                                            name="playerName"
+                                            value={playerName}
+                                            onChange={(event) => setPlayerName(event.target.value)}
+                                            maxLength={24}
+                                            autoComplete="nickname"
+                                            required
+                                            placeholder="Your name"
+                                        />
+                                        <button className="primary-action" type="submit" disabled={isSubmittingScore}>
+                                            {isSubmittingScore ? "Saving…" : "Save score"}
+                                        </button>
+                                    </div>
+                                    <p className="score-submit-status" aria-live="polite">{scoreSubmitStatus}</p>
+                                </form>
+                            ) : (
+                                <p className="score-submit-status">
+                                    Connect the Supabase project to save scores for everyone.
+                                </p>
+                            )}
+                            <Leaderboard refreshKey={leaderboardRefresh} limit={10} />
+                        </div>
+                    )}
                     <div className="results-actions">
                        <button
                             className="primary-action"
