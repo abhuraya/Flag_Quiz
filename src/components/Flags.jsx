@@ -9,7 +9,7 @@ import { leaderboardConfigured, submitLeaderboardScore } from "../utils/leaderbo
 
 
 const QUESTION_COUNT = 10;
-const TIMED_MODE_SECONDS = 5 * 60;
+const TIMED_MODE_SECONDS = 4 * 60;
 
 function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
@@ -372,7 +372,7 @@ function handleChangeDifficulty() {
                 <section className="results-card">
                     <p className="quiz-label">FLAG CHALLENGE</p>
                     <h1>Choose a game mode</h1>
-                    <p>Play a focused ten-question round or race the clock for five minutes.</p>
+                    <p>Play a focused ten-question round or race the clock for four minutes.</p>
                     <div className="difficulty-options game-mode-options">
                         <button className="difficulty-card difficulty-medium" onClick={() => handleModeSelect("classic")}>
                             <div className="difficulty-card-top">
@@ -384,11 +384,11 @@ function handleChangeDifficulty() {
                         </button>
                         <button className="difficulty-card difficulty-hard" onClick={() => handleModeSelect("timed")}>
                             <div className="difficulty-card-top">
-                                <span className="difficulty-name">5-minute challenge</span>
+                                <span className="difficulty-name">4-minute challenge</span>
                                 <span className="difficulty-arrow">→</span>
                             </div>
                             <p>Answer as many flags as you can before time runs out.</p>
-                            <span className="difficulty-details">Five minutes total</span>
+                            <span className="difficulty-details">Four minutes total</span>
                         </button>
                     </div>
                     <Link className="secondary-action difficulty-home-link" to="/">Back home</Link>
@@ -434,7 +434,7 @@ function handleChangeDifficulty() {
 
                                         <p>
                                             {quizMode === "timed"
-                                                ? "Five minutes total"
+                                                ? "Four minutes total"
                                                 : `${settings.time} seconds per question`}
                                         </p>
 
@@ -468,7 +468,7 @@ function handleChangeDifficulty() {
 
                     <p className="final-score">
                         {quizMode === "timed" ? (
-                            <>You scored <strong>{score} correct</strong> in five minutes.</>
+                            <>You scored <strong>{score} correct</strong> in four minutes.</>
                         ) : (
                             <>You scored <strong>{score} out of {questions.length}</strong></>
                         )}
