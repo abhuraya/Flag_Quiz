@@ -50,6 +50,7 @@ function Flags() {
     const [modeTimeLeft, setModeTimeLeft] = useState(TIMED_MODE_SECONDS);
     const modeEndsAtRef = useRef(null);
     const [score, setScore] = useState(0);
+    const [correctStreak, setCorrectStreak] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [answerHistory, setAnswerHistory] = useState([]);
     const [isFinished, setIsFinished] = useState(false);
@@ -89,6 +90,7 @@ useEffect(
         if (timeLeft === 0) {
             setTimedOut(true);
             setSelectedAnswer("TIME_OUT");
+            setCorrectStreak(0);
 
             setAnswerHistory(function (currentHistory) {
                 return [
@@ -100,6 +102,8 @@ useEffect(
                             currentQuestion.correctCountry.flag,
                         selectedAnswer: null,
                         isCorrect: false,
+                        pointsEarned: 0,
+                        multiplier: 0,
                         timedOut: true,
                     },
                 ];
@@ -204,6 +208,7 @@ useEffect(
     setQuestionIndex(0);
     setQuestionNumber(1);
     setScore(0);
+    setCorrectStreak(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
     setExitRequested(false);
@@ -231,6 +236,7 @@ useEffect(
     setQuestionIndex(0);
     setQuestionNumber(1);
     setScore(0);
+    setCorrectStreak(0);
     setSelectedAnswer(null);
     setIsFinished(false);
     setTimedOut(false);
@@ -246,6 +252,7 @@ function handleChangeDifficulty() {
     setQuestionIndex(0);
     setQuestionNumber(1);
     setScore(0);
+    setCorrectStreak(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
     setIsFinished(false);
@@ -264,6 +271,8 @@ function handleChangeDifficulty() {
 
         setSelectedAnswer(countryName);
 
+        const pointsEarned = isCorrect ? correctStreak + 1 : 0;
+
         setAnswerHistory(function (currentHistory) {
             return [
                 ...currentHistory,
@@ -272,16 +281,23 @@ function handleChangeDifficulty() {
                     flag: currentQuestion.correctCountry.flag,
                     selectedAnswer: countryName,
                     isCorrect,
+                    pointsEarned,
+                    multiplier: isCorrect ? pointsEarned : 0,
                     timedOut: false
                 }
             ];
         });
 
-            if (isCorrect) {
-                setScore(function (currentScore) {
-                    return currentScore + 1;
-                });
-            }
+        if (isCorrect) {
+            setScore(function (currentScore) {
+                return currentScore + pointsEarned;
+            });
+            setCorrectStreak(function (currentStreak) {
+                return currentStreak + 1;
+            });
+        } else {
+            setCorrectStreak(0);
+        }
     }
 
     function handleNextQuestion() {
@@ -468,22 +484,22 @@ function handleChangeDifficulty() {
 
                     <p className="final-score">
                         {quizMode === "timed" ? (
-                            <>You scored <strong>{score} correct</strong> in two minutes.</>
+                            <>You scored <strong>{score} points</strong> in two minutes.</>
                         ) : (
-                            <>You scored <strong>{score} out of {questions.length}</strong></>
+                            <>You scored <strong>{score} points</strong> across {questions.length} flags.</>
                         )}
                     </p>
 
                     <p>
                         {quizMode === "timed"
                             ? answerHistory.length > 0
-                                ? `Accuracy: ${Math.round((score / answerHistory.length) * 100)}% of answered flags.`
+                                ? `Accuracy: ${Math.round((answerHistory.filter((answer) => answer.isCorrect).length / answerHistory.length) * 100)}% of answered flags.`
                                 : "No flags were answered this round."
-                            : `That is ${Math.round((score / questions.length) * 100)}% correct.`}
+                            : `That is ${Math.round((answerHistory.filter((answer) => answer.isCorrect).length / questions.length) * 100)}% correct.`}
                     </p>
                     {quizMode === "classic" && (
                         <p className="best-score">
-                            Best score: <strong>{bestScore}/{questions.length}</strong>
+                            Best score: <strong>{bestScore} points</strong>
                         </p>
                     )}
                     <div className="answer-review">
@@ -522,6 +538,10 @@ function handleChangeDifficulty() {
                                                 Correct answer:{" "}
                                                 <strong>{answer.country}</strong>
                                             </p>
+
+                                            {answer.isCorrect && answer.pointsEarned > 0 && (
+                                                <p>Points earned: <strong>{answer.pointsEarned}</strong></p>
+                                            )}
 
                                             {!answer.isCorrect && !answer.timedOut && (
                                                 <p>
@@ -632,6 +652,13 @@ function handleChangeDifficulty() {
                             Exit
                         </button>
                     </div>
+                )}
+
+                {correctStreak > 0 && (
+                    <p className="streak-indicator" role="status">
+                        Current multiplier: <strong>x{correctStreak + 1}</strong>
+                        <span> — answer correctly to earn {correctStreak + 1} points</span>
+                    </p>
                 )}
 
                 <div className="progress-track">

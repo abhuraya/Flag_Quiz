@@ -116,6 +116,25 @@ button:disabled {
     font-size: 1.2rem;
 }
 
+.streak-indicator {
+    margin: -4px 0 20px;
+    padding: 12px 16px;
+    color: #76500c;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(135deg, #fff5cf, #fffaf0);
+    border: 1px solid #f0d27b;
+    border-radius: 12px;
+}
+
+.streak-indicator strong {
+    color: #9a6100;
+}
+
+.streak-indicator span {
+    font-weight: 500;
+}
+
 /* Progress bar */
 
 .progress-track {
