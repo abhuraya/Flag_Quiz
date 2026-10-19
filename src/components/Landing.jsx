@@ -85,34 +85,6 @@ function Landing() {
 
             <Leaderboard />
 
-            <section className="landing-features">
-                <article>
-                    <span>01</span>
-                    <h2>Fast-paced sessions</h2>
-                    <p>
-                        Every game contains ten randomized questions
-                        with a fifteen-second countdown.
-                    </p>
-                </article>
-
-                <article>
-                    <span>02</span>
-                    <h2>Immediate feedback</h2>
-                    <p>
-                        See the correct answer instantly and learn
-                        from every missed flag.
-                    </p>
-                </article>
-
-                <article>
-                    <span>03</span>
-                    <h2>Track improvement</h2>
-                    <p>
-                        Timed challenge scores can be shared on a leaderboard
-                        with players on other devices.
-                    </p>
-                </article>
-            </section>
         </main>
     );
 }
