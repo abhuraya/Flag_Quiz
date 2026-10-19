@@ -655,10 +655,15 @@ function handleChangeDifficulty() {
                 )}
 
                 {correctStreak > 0 && (
-                    <p className="streak-indicator" role="status">
-                        Current multiplier: <strong>x{correctStreak + 1}</strong>
-                        <span> — answer correctly to earn {correctStreak + 1} points</span>
-                    </p>
+                    <div
+                        className={`streak-indicator streak-level-${((correctStreak - 1) % 6) + 1}`}
+                        role="status"
+                        aria-live="polite"
+                    >
+                        <span>Streak multiplier</span>
+                        <strong>x{correctStreak + 1}</strong>
+                        <span>Answer correctly to earn {correctStreak + 1} points</span>
+                    </div>
                 )}
 
                 <div className="progress-track">
