@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
+import Leaderboard from "./Leaderboard";
 
 function Landing() {
-    const bestScore =
-        Number(localStorage.getItem("flagQuizBestScore")) || 0;
-
     return (
         <main className="landing-page">
             <section className="landing-hero">
@@ -42,17 +40,17 @@ function Landing() {
                     <div className="landing-stats">
                         <div>
                             <strong>10</strong>
-                            <span>Questions</span>
+                            <span>Classic questions</span>
                         </div>
 
                         <div>
-                            <strong>15s</strong>
-                            <span>Per flag</span>
+                            <strong>5 min</strong>
+                            <span>Timed mode</span>
                         </div>
 
                         <div>
-                            <strong>{bestScore}/10</strong>
-                            <span>Best score</span>
+                            <strong>Global</strong>
+                            <span>Shared scores</span>
                         </div>
                     </div>
                 </div>
@@ -85,6 +83,8 @@ function Landing() {
                 </div>
             </section>
 
+            <Leaderboard />
+
             <section className="landing-features">
                 <article>
                     <span>01</span>
@@ -108,8 +108,8 @@ function Landing() {
                     <span>03</span>
                     <h2>Track improvement</h2>
                     <p>
-                        Your highest score is saved locally so you
-                        always have a personal record to beat.
+                        Timed challenge scores can be shared on a leaderboard
+                        with players on other devices.
                     </p>
                 </article>
             </section>
