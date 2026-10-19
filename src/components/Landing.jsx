@@ -44,7 +44,7 @@ function Landing() {
                         </div>
 
                         <div>
-                            <strong>5 min</strong>
+                            <strong>2 min</strong>
                             <span>Timed mode</span>
                         </div>
 
