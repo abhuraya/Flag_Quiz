@@ -207,6 +207,46 @@ button:disabled {
     color: #854d0e;
 }
 
+.multiplier-level-7 {
+    color: #115e59 !important;
+    background: #ccfbf1 !important;
+    border-color: #5eead4 !important;
+}
+
+.multiplier-level-7 strong {
+    color: #115e59;
+}
+
+.multiplier-level-8 {
+    color: #334155 !important;
+    background: #e2e8f0 !important;
+    border-color: #94a3b8 !important;
+}
+
+.multiplier-level-8 strong {
+    color: #334155;
+}
+
+.multiplier-level-9 {
+    color: #3f6212 !important;
+    background: #ecfccb !important;
+    border-color: #bef264 !important;
+}
+
+.multiplier-level-9 strong {
+    color: #3f6212;
+}
+
+.multiplier-level-10 {
+    color: #86198f !important;
+    background: #fae8ff !important;
+    border-color: #e879f9 !important;
+}
+
+.multiplier-level-10 strong {
+    color: #86198f;
+}
+
 /* Progress bar */
 
 .progress-track {
