@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import countries from "../data/countries";
 import { createGameSession } from "../utils/quizHelpers";
@@ -36,6 +36,7 @@ const DIFFICULTIES = {
 };
 
 function Flags() {
+    const navigate = useNavigate();
     const [quizMode, setQuizMode] = useState(null);
     const [difficulty, setDifficulty] = useState(null);
     const [questions, setQuestions] = useState([]);
@@ -66,6 +67,8 @@ function Flags() {
     const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
     const [isSubmittingScore, setIsSubmittingScore] = useState(false);
     const [scoreSaved, setScoreSaved] = useState(false);
+    const [isExiting, setIsExiting] = useState(false);
+    const [exitStatus, setExitStatus] = useState("");
     const [bestScore, setBestScore] = useState(function () {
     const savedBestScore = localStorage.getItem("flagQuizBestScore");
 
@@ -313,6 +316,28 @@ function handleChangeDifficulty() {
         setTimedOut(false);
         if (quizMode !== "timed") {
             setTimeLeft(difficultySettings.time);
+        }
+    }
+
+    async function handleSaveAndExit() {
+        if (isExiting) {
+            return;
+        }
+
+        if (!leaderboardConfigured) {
+            setExitStatus("The shared leaderboard is not configured yet, so the score could not be saved.");
+            return;
+        }
+
+        setIsExiting(true);
+        setExitStatus("");
+
+        try {
+            await submitLeaderboardScore(playerName.trim() || "Player", score);
+            navigate("/");
+        } catch (error) {
+            setExitStatus(error.message || "The score could not be saved. Please try again.");
+            setIsExiting(false);
         }
     }
 
@@ -606,6 +631,31 @@ function handleChangeDifficulty() {
                         </div>
                     </div>
                 </header>
+
+                {quizMode === "timed" && (
+                    <div className="timed-exit-control">
+                        <label className="timed-exit-name" htmlFor="timed-player-name">
+                            Name for saved score
+                            <input
+                                id="timed-player-name"
+                                value={playerName}
+                                onChange={(event) => setPlayerName(event.target.value)}
+                                maxLength={24}
+                                autoComplete="nickname"
+                                placeholder="Player"
+                            />
+                        </label>
+                        <button
+                            className="secondary-action"
+                            type="button"
+                            onClick={handleSaveAndExit}
+                            disabled={isExiting}
+                        >
+                            {isExiting ? "Saving score…" : "Save score & exit"}
+                        </button>
+                        <p className="timed-exit-status" aria-live="polite">{exitStatus}</p>
+                    </div>
+                )}
 
                 <div className="progress-track">
                     <div
