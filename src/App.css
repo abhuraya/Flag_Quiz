@@ -1106,3 +1106,54 @@ button:disabled {
         width: 100%;
     }
 }
+
+
+.timed-exit-control {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin: -6px 0 24px;
+    padding: 14px;
+    background: #f7f8fc;
+    border: 1px solid #e1e6f0;
+    border-radius: 14px;
+}
+
+.timed-exit-name {
+    display: grid;
+    flex: 1;
+    gap: 6px;
+    color: #566076;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.timed-exit-name input {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 14px;
+    color: #172033;
+    background: #ffffff;
+    border: 1px solid #cfd6e4;
+    border-radius: 12px;
+    font: inherit;
+}
+
+.timed-exit-name input:focus {
+    outline: 3px solid rgba(91, 117, 255, 0.18);
+    border-color: #5b75ff;
+}
+
+.timed-exit-status {
+    flex-basis: 100%;
+    margin: 0;
+    color: #a52f44;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 720px) {
+    .timed-exit-control {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
