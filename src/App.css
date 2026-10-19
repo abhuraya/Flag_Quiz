@@ -1109,7 +1109,8 @@ button:disabled {
 
 
 .timed-exit-control {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: flex-end;
     gap: 12px;
     margin: -6px 0 24px;
@@ -1145,7 +1146,7 @@ button:disabled {
 }
 
 .timed-exit-status {
-    flex-basis: 100%;
+    grid-column: 1 / -1;
     margin: 0;
     color: #a52f44;
     font-size: 0.85rem;
@@ -1153,7 +1154,11 @@ button:disabled {
 
 @media (max-width: 720px) {
     .timed-exit-control {
+        grid-template-columns: 1fr;
         align-items: stretch;
-        flex-direction: column;
+    }
+
+    .timed-exit-status {
+        grid-column: auto;
     }
 }
