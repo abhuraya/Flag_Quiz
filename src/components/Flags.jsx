@@ -67,8 +67,7 @@ function Flags() {
     const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
     const [isSubmittingScore, setIsSubmittingScore] = useState(false);
     const [scoreSaved, setScoreSaved] = useState(false);
-    const [isExiting, setIsExiting] = useState(false);
-    const [exitStatus, setExitStatus] = useState("");
+    const [exitRequested, setExitRequested] = useState(false);
     const [bestScore, setBestScore] = useState(function () {
     const savedBestScore = localStorage.getItem("flagQuizBestScore");
 
@@ -207,12 +206,14 @@ useEffect(
     setScore(0);
     setSelectedAnswer(null);
     setAnswerHistory([]);
+    setExitRequested(false);
     setIsFinished(false);
     setTimedOut(false);
     setTimeLeft(settings.time);
 }
                                                                 
  function startNewGame() {
+    setExitRequested(false);
     setScoreSaved(false);
     setScoreSubmitStatus("");
     modeEndsAtRef.current = quizMode === "timed"
@@ -319,26 +320,11 @@ function handleChangeDifficulty() {
         }
     }
 
-    async function handleSaveAndExit() {
-        if (isExiting) {
-            return;
-        }
-
-        if (!leaderboardConfigured) {
-            setExitStatus("The shared leaderboard is not configured yet, so the score could not be saved.");
-            return;
-        }
-
-        setIsExiting(true);
-        setExitStatus("");
-
-        try {
-            await submitLeaderboardScore(playerName.trim() || "Player", score);
-            navigate("/");
-        } catch (error) {
-            setExitStatus(error.message || "The score could not be saved. Please try again.");
-            setIsExiting(false);
-        }
+    function handleExitTimedMode() {
+        setExitRequested(true);
+        modeEndsAtRef.current = Date.now();
+        setModeTimeLeft(0);
+        setIsFinished(true);
     }
 
     async function handleSaveTimedScore(event) {
@@ -349,10 +335,14 @@ function handleChangeDifficulty() {
         try {
             await submitLeaderboardScore(playerName, score);
             setScoreSaved(true);
-            setScoreSubmitStatus("Your score is on the shared leaderboard.");
-            setLeaderboardRefresh(function (current) {
-                return current + 1;
-            });
+            if (exitRequested) {
+                navigate("/");
+            } else {
+                setScoreSubmitStatus("Your score is on the shared leaderboard.");
+                setLeaderboardRefresh(function (current) {
+                    return current + 1;
+                });
+            }
         } catch (error) {
             setScoreSubmitStatus(error.message || "Your score could not be saved.");
         } finally {
@@ -566,7 +556,7 @@ function handleChangeDifficulty() {
                                             placeholder="Your name"
                                         />
                                         <button className="primary-action" type="submit" disabled={isSubmittingScore || scoreSaved}>
-                                            {isSubmittingScore ? "Saving…" : scoreSaved ? "Score saved" : "Save score"}
+                                            {isSubmittingScore ? "Saving…" : scoreSaved ? "Score saved" : exitRequested ? "Save & return home" : "Save score"}
                                         </button>
                                     </div>
                                     <p className="score-submit-status" aria-live="polite">{scoreSubmitStatus}</p>
@@ -634,26 +624,13 @@ function handleChangeDifficulty() {
 
                 {quizMode === "timed" && (
                     <div className="timed-exit-control">
-                        <label className="timed-exit-name" htmlFor="timed-player-name">
-                            Name for saved score
-                            <input
-                                id="timed-player-name"
-                                value={playerName}
-                                onChange={(event) => setPlayerName(event.target.value)}
-                                maxLength={24}
-                                autoComplete="nickname"
-                                placeholder="Player"
-                            />
-                        </label>
                         <button
                             className="secondary-action"
                             type="button"
-                            onClick={handleSaveAndExit}
-                            disabled={isExiting}
+                            onClick={handleExitTimedMode}
                         >
-                            {isExiting ? "Saving score…" : "Save score & exit"}
+                            Exit
                         </button>
-                        <p className="timed-exit-status" aria-live="polite">{exitStatus}</p>
                     </div>
                 )}
 
@@ -698,14 +675,6 @@ function handleChangeDifficulty() {
 
                 {selectedAnswer !== null && (
                     <div className="feedback-area">
-                        <p>
-                            {timedOut
-                                ? `Time expired. The correct answer is ${currentQuestion.correctCountry.name}.`
-                                : selectedAnswer === currentQuestion.correctCountry.name
-                                ? "Correct!"
-                                : `The correct answer is ${currentQuestion.correctCountry.name}.`}
-                        </p>
-
                         <button
                             className="primary-action"
                             onClick={handleNextQuestion}
