@@ -59,6 +59,7 @@ function Flags() {
     questions.length > 0
         ? questions[questionIndex]
         : null;
+    const currentMultiplier = correctStreak + 1;
 
 
     const [timeLeft, setTimeLeft] = useState(0);
@@ -654,17 +655,15 @@ function handleChangeDifficulty() {
                     </div>
                 )}
 
-                {correctStreak > 0 && (
-                    <div
-                        className={`streak-indicator streak-level-${((correctStreak - 1) % 6) + 1}`}
-                        role="status"
-                        aria-live="polite"
-                    >
-                        <span>Streak multiplier</span>
-                        <strong>x{correctStreak + 1}</strong>
-                        <span>Answer correctly to earn {correctStreak + 1} points</span>
-                    </div>
-                )}
+                <div
+                    className={`streak-indicator streak-level-${((currentMultiplier - 1) % 6) + 1}`}
+                    role="status"
+                    aria-live="polite"
+                    aria-label={`Multiplier ${currentMultiplier}`}
+                >
+                    <span>Multiplier</span>
+                    <strong>{currentMultiplier}×</strong>
+                </div>
 
                 <div className="progress-track">
                     <div
