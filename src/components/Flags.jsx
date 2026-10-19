@@ -424,11 +424,11 @@ function handleChangeDifficulty() {
                     </p>
 
                     <p>
-                        That is{" "}
-                        {Math.round(
-                            (score / questions.length) * 100
-                        )}
-                        % correct.
+                        {quizMode === "timed"
+                            ? answerHistory.length > 0
+                                ? `Accuracy: ${Math.round((score / answerHistory.length) * 100)}% of answered flags.`
+                                : "No flags were answered this round."
+                            : `That is ${Math.round((score / questions.length) * 100)}% correct.`}
                     </p>
                     {quizMode === "classic" && (
                         <p className="best-score">
