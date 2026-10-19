@@ -65,6 +65,7 @@ function Flags() {
     const [scoreSubmitStatus, setScoreSubmitStatus] = useState("");
     const [leaderboardRefresh, setLeaderboardRefresh] = useState(0);
     const [isSubmittingScore, setIsSubmittingScore] = useState(false);
+    const [scoreSaved, setScoreSaved] = useState(false);
     const [bestScore, setBestScore] = useState(function () {
     const savedBestScore = localStorage.getItem("flagQuizBestScore");
 
@@ -201,6 +202,8 @@ useEffect(
 }
                                                                 
  function startNewGame() {
+    setScoreSaved(false);
+    setScoreSubmitStatus("");
     modeEndsAtRef.current = quizMode === "timed"
         ? Date.now() + TIMED_MODE_SECONDS * 1000
         : null;
@@ -312,6 +315,7 @@ function handleChangeDifficulty() {
 
         try {
             await submitLeaderboardScore(playerName, score);
+            setScoreSaved(true);
             setScoreSubmitStatus("Your score is on the shared leaderboard.");
             setLeaderboardRefresh(function (current) {
                 return current + 1;
@@ -528,8 +532,8 @@ function handleChangeDifficulty() {
                                             required
                                             placeholder="Your name"
                                         />
-                                        <button className="primary-action" type="submit" disabled={isSubmittingScore}>
-                                            {isSubmittingScore ? "Saving…" : "Save score"}
+                                        <button className="primary-action" type="submit" disabled={isSubmittingScore || scoreSaved}>
+                                            {isSubmittingScore ? "Saving…" : scoreSaved ? "Score saved" : "Save score"}
                                         </button>
                                     </div>
                                     <p className="score-submit-status" aria-live="polite">{scoreSubmitStatus}</p>
