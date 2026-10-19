@@ -247,6 +247,31 @@ button:disabled {
     color: #86198f;
 }
 
+.timed-enter-banner {
+    margin: 0 0 18px;
+    padding: 11px 16px;
+    color: #33405a;
+    font-size: 0.95rem;
+    font-weight: 650;
+    text-align: center;
+    background: #eef1ff;
+    border: 1px solid #d7ddff;
+    border-radius: 12px;
+}
+
+.timed-enter-banner kbd {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 3px 8px;
+    color: #3445a5;
+    font: inherit;
+    font-size: 0.88rem;
+    background: #ffffff;
+    border: 1px solid #bec8ff;
+    border-bottom-width: 3px;
+    border-radius: 6px;
+}
+
 /* Progress bar */
 
 .progress-track {
