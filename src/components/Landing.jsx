@@ -83,7 +83,7 @@ function Landing() {
                 </div>
             </section>
 
-            <Leaderboard />
+            <Leaderboard limit={10} />
 
         </main>
     );
