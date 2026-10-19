@@ -174,11 +174,19 @@ useEffect(
     [currentQuestion, questions, questionIndex]
 );
 
-    function handleDifficultySelect(selectedDifficulty) {
+    function handleModeSelect(selectedMode) {
+        setQuizMode(selectedMode);
+
+        if (selectedMode === "timed") {
+            handleDifficultySelect("medium", "timed");
+        }
+    }
+
+    function handleDifficultySelect(selectedDifficulty, selectedMode = quizMode) {
     const settings = DIFFICULTIES[selectedDifficulty];
 
     setDifficulty(selectedDifficulty);
-    modeEndsAtRef.current = quizMode === "timed"
+    modeEndsAtRef.current = selectedMode === "timed"
         ? Date.now() + TIMED_MODE_SECONDS * 1000
         : null;
     setModeTimeLeft(TIMED_MODE_SECONDS);
@@ -351,7 +359,7 @@ function handleChangeDifficulty() {
                     <h1>Choose a game mode</h1>
                     <p>Play a focused ten-question round or race the clock for five minutes.</p>
                     <div className="difficulty-options game-mode-options">
-                        <button className="difficulty-card difficulty-medium" onClick={() => setQuizMode("classic")}>
+                        <button className="difficulty-card difficulty-medium" onClick={() => handleModeSelect("classic")}>
                             <div className="difficulty-card-top">
                                 <span className="difficulty-name">Classic</span>
                                 <span className="difficulty-arrow">→</span>
@@ -359,7 +367,7 @@ function handleChangeDifficulty() {
                             <p>Ten flags with a timer for each question.</p>
                             <span className="difficulty-details">Choose your difficulty</span>
                         </button>
-                        <button className="difficulty-card difficulty-hard" onClick={() => setQuizMode("timed")}>
+                        <button className="difficulty-card difficulty-hard" onClick={() => handleModeSelect("timed")}>
                             <div className="difficulty-card-top">
                                 <span className="difficulty-name">5-minute challenge</span>
                                 <span className="difficulty-arrow">→</span>
