@@ -333,7 +333,7 @@ function handleChangeDifficulty() {
         setExitStatus("");
 
         try {
-            await submitLeaderboardScore(playerName || "Player", score);
+            await submitLeaderboardScore(playerName.trim() || "Player", score);
             navigate("/");
         } catch (error) {
             setExitStatus(error.message || "The score could not be saved. Please try again.");
