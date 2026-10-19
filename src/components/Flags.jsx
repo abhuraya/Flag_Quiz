@@ -337,6 +337,30 @@ function handleChangeDifficulty() {
         }
     }
 
+    useEffect(function () {
+        if (quizMode !== "timed" || selectedAnswer === null || isFinished) {
+            return undefined;
+        }
+
+        function handleTimedEnter(event) {
+            if (
+                event.key !== "Enter" ||
+                event.repeat ||
+                event.target.closest?.(".exit-stat")
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+            handleNextQuestion();
+        }
+
+        window.addEventListener("keydown", handleTimedEnter);
+        return function () {
+            window.removeEventListener("keydown", handleTimedEnter);
+        };
+    }, [quizMode, selectedAnswer, isFinished, questionIndex, questions, score, bestScore, difficultySettings]);
+
     function handleExitTimedMode() {
         setExitRequested(true);
         modeEndsAtRef.current = Date.now();
@@ -657,6 +681,12 @@ function handleChangeDifficulty() {
                     </div>
                 </header>
 
+                {quizMode === "timed" && (
+                    <p className="timed-enter-banner">
+                        Press <kbd>Enter</kbd> to move to the next question.
+                    </p>
+                )}
+
                 <div className="progress-track">
                     <div
                         className="progress-value"
@@ -696,7 +726,7 @@ function handleChangeDifficulty() {
                     })}
                 </div>
 
-                {selectedAnswer !== null && (
+                {selectedAnswer !== null && quizMode !== "timed" && (
                     <div className="feedback-area">
                         <button
                             className="primary-action"
