@@ -640,30 +640,22 @@ function handleChangeDifficulty() {
                             <span>{quizMode === "timed" ? "Time left" : "Time"}</span>
                             <strong>{quizMode === "timed" ? formatTime(modeTimeLeft) : `${timeLeft}s`}</strong>
                         </div>
+                        <div className={`multiplier-stat multiplier-level-${((currentMultiplier - 1) % 6) + 1}`} role="status" aria-live="polite">
+                            <span>Multiplier</span>
+                            <strong>{currentMultiplier}×</strong>
+                        </div>
+                        {quizMode === "timed" && (
+                            <button
+                                className="exit-stat"
+                                type="button"
+                                onClick={handleExitTimedMode}
+                                aria-label="Exit timed challenge"
+                            >
+                                Exit
+                            </button>
+                        )}
                     </div>
                 </header>
-
-                {quizMode === "timed" && (
-                    <div className="timed-exit-control">
-                        <button
-                            className="secondary-action"
-                            type="button"
-                            onClick={handleExitTimedMode}
-                        >
-                            Exit
-                        </button>
-                    </div>
-                )}
-
-                <div
-                    className={`streak-indicator streak-level-${((currentMultiplier - 1) % 6) + 1}`}
-                    role="status"
-                    aria-live="polite"
-                    aria-label={`Multiplier ${currentMultiplier}`}
-                >
-                    <span>Multiplier</span>
-                    <strong>{currentMultiplier}×</strong>
-                </div>
 
                 <div className="progress-track">
                     <div
