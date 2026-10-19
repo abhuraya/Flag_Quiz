@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchLeaderboard, leaderboardConfigured } from "../utils/leaderboard";
 
-function Leaderboard({ refreshKey = 0, limit = 5 }) {
+function Leaderboard({ refreshKey = 0, limit = 10 }) {
     const [scores, setScores] = useState([]);
     const [status, setStatus] = useState(leaderboardConfigured ? "loading" : "unconfigured");
 
