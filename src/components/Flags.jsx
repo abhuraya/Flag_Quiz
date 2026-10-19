@@ -322,7 +322,7 @@ function handleChangeDifficulty() {
                     <p className="quiz-label">FLAG CHALLENGE</p>
                     <h1>Choose a game mode</h1>
                     <p>Play a focused ten-question round or race the clock for five minutes.</p>
-                    <div className="difficulty-options">
+                    <div className="difficulty-options game-mode-options">
                         <button className="difficulty-card difficulty-medium" onClick={() => setQuizMode("classic")}>
                             <div className="difficulty-card-top">
                                 <span className="difficulty-name">Classic</span>
